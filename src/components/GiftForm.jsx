@@ -43,8 +43,7 @@ function GiftForm() {
         formData
       );
 
-      const parsed = JSON.parse(response.data.result);
-      setResults(parsed);
+      setResults(response.data.results);
     } catch (error) {
       console.log(error);
       alert("Something went wrong. Check backend terminal.");
@@ -80,30 +79,44 @@ function GiftForm() {
             Personalized picks generated for your person.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-6 mt-10">
+          <div className="grid md:grid-cols-2 gap-8 mt-10">
             {results.map((gift, index) => (
               <div
                 key={index}
-                className="bg-[#faf8f5] border border-[#ece6df] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition"
+                className="bg-[#faf8f5] border border-[#ece6df] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition flex flex-col min-h-[560px]"
               >
-                <img
-                  src={`https://picsum.photos/600/40${index}`}
-                  alt={gift.name}
-                  className="w-full h-[240px] object-cover"
-                />
+                {gift.image ? (
+                  <img
+                    src={gift.image}
+                    alt={gift.name}
+                    className="w-full h-[260px] object-contain bg-white p-6"
+                  />
+                ) : (
+                  <div className="w-full h-[260px] bg-[#f1ebe5] flex items-center justify-center text-6xl">
+                    🎁
+                  </div>
+                )}
 
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-2xl font-semibold leading-tight">
+                    <h3 className="text-2xl font-semibold leading-tight max-w-[70%]">
                       {gift.name}
                     </h3>
 
-                    <span className="bg-[#9f2d2d] text-white text-sm px-3 py-1 rounded-full whitespace-nowrap">
+                    <span className="bg-[#9f2d2d] text-white text-xs px-3 py-1 rounded-full whitespace-nowrap">
                       {gift.match}
                     </span>
                   </div>
 
-                  <p className="text-gray-500 mt-4 leading-7">{gift.reason}</p>
+                  <p className="text-gray-500 mt-4 leading-7 flex-1">
+                    {gift.reason}
+                  </p>
+
+                  {gift.source && (
+                    <p className="text-xs uppercase tracking-widest text-gray-400 mt-5">
+                      Source: {gift.source}
+                    </p>
+                  )}
 
                   <div className="flex items-center justify-between mt-6">
                     <p className="font-semibold text-lg">{gift.price}</p>
@@ -114,9 +127,7 @@ function GiftForm() {
                           ? `https://www.google.com/maps/search/${encodeURIComponent(
                               gift.name + " gift shop near me"
                             )}`
-                          : `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(
-                              gift.name + " " + formData.budget + " India"
-                            )}`
+                          : gift.buyLink
                       }
                       target="_blank"
                       rel="noreferrer"
@@ -152,68 +163,79 @@ function GiftForm() {
         <p className="uppercase tracking-[0.3em] text-sm text-gray-400">
           Step {step} of 4
         </p>
+
         <div className="w-full h-2 bg-[#eee7e1] rounded-full mt-6 overflow-hidden">
-  <div
-    className="h-full bg-[#9f2d2d] transition-all duration-500"
-    style={{
-      width: `${(step / 4) * 100}%`,
-    }}
-  />
-</div>
+          <div
+            className="h-full bg-[#9f2d2d] transition-all duration-500"
+            style={{ width: `${(step / 4) * 100}%` }}
+          />
+        </div>
 
         {step === 1 && (
           <>
-            <h2 className="text-5xl font-serif mt-4">
+            <h2 className="text-5xl font-serif mt-8">
               Who is this gift for?
             </h2>
 
             <div className="grid grid-cols-2 gap-4 mt-10">
-              {["Friend", "Boyfriend", "Girlfriend", "Mother", "Father", "Sibling"].map(
-                (item) => (
-                  <button
-                    key={item}
-                    onClick={() => updateField("relationship", item)}
-                    className={`border rounded-xl p-5 text-left ${
-                      formData.relationship === item
-                        ? "border-[#9f2d2d] bg-[#fdf3f3]"
-                        : "border-gray-200"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                )
-              )}
+              {[
+                "Friend",
+                "Boyfriend",
+                "Girlfriend",
+                "Mother",
+                "Father",
+                "Sibling",
+              ].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => updateField("relationship", item)}
+                  className={`border rounded-xl p-5 text-left ${
+                    formData.relationship === item
+                      ? "border-[#9f2d2d] bg-[#fdf3f3]"
+                      : "border-gray-200"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
             </div>
           </>
         )}
 
         {step === 2 && (
           <>
-            <h2 className="text-5xl font-serif mt-4">What’s the occasion?</h2>
+            <h2 className="text-5xl font-serif mt-8">
+              What’s the occasion?
+            </h2>
 
             <div className="grid grid-cols-2 gap-4 mt-10">
-              {["Birthday", "Anniversary", "Graduation", "Wedding", "Festival", "Just Because"].map(
-                (item) => (
-                  <button
-                    key={item}
-                    onClick={() => updateField("occasion", item)}
-                    className={`border rounded-xl p-5 text-left ${
-                      formData.occasion === item
-                        ? "border-[#9f2d2d] bg-[#fdf3f3]"
-                        : "border-gray-200"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                )
-              )}
+              {[
+                "Birthday",
+                "Anniversary",
+                "Graduation",
+                "Wedding",
+                "Festival",
+                "Just Because",
+              ].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => updateField("occasion", item)}
+                  className={`border rounded-xl p-5 text-left ${
+                    formData.occasion === item
+                      ? "border-[#9f2d2d] bg-[#fdf3f3]"
+                      : "border-gray-200"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
             </div>
           </>
         )}
 
         {step === 3 && (
           <>
-            <h2 className="text-5xl font-serif mt-4">What do they love?</h2>
+            <h2 className="text-5xl font-serif mt-8">What do they love?</h2>
 
             <textarea
               placeholder="Fashion, skincare, gaming, books..."
@@ -221,41 +243,42 @@ function GiftForm() {
               value={formData.interests}
               onChange={(e) => updateField("interests", e.target.value)}
             />
+
             <div className="flex flex-wrap gap-3 mt-5">
-  {[
-    "Fashion",
-    "Skincare",
-    "Books",
-    "Gaming",
-    "Tech",
-    "Art",
-    "Fitness",
-    "Food",
-    "Home Decor",
-    "Jewellery",
-  ].map((item) => (
-    <button
-      key={item}
-      onClick={() =>
-        updateField(
-          "interests",
-          formData.interests
-            ? formData.interests + ", " + item
-            : item
-        )
-      }
-      className="border border-gray-200 px-4 py-2 rounded-full text-sm hover:bg-[#fdf3f3]"
-    >
-      {item}
-    </button>
-  ))}
-</div>
+              {[
+                "Fashion",
+                "Skincare",
+                "Books",
+                "Gaming",
+                "Tech",
+                "Art",
+                "Fitness",
+                "Food",
+                "Home Decor",
+                "Jewellery",
+              ].map((item) => (
+                <button
+                  key={item}
+                  onClick={() =>
+                    updateField(
+                      "interests",
+                      formData.interests
+                        ? formData.interests + ", " + item
+                        : item
+                    )
+                  }
+                  className="border border-gray-200 px-4 py-2 rounded-full text-sm hover:bg-[#fdf3f3]"
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
           </>
         )}
 
         {step === 4 && (
           <>
-            <h2 className="text-5xl font-serif mt-4">What’s your budget?</h2>
+            <h2 className="text-5xl font-serif mt-8">What’s your budget?</h2>
 
             <div className="grid grid-cols-2 gap-4 mt-10">
               {["Under ₹1000", "₹1000 - ₹3000", "₹3000 - ₹5000", "₹5000+"].map(

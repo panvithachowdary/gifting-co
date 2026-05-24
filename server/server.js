@@ -1,5 +1,9 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import axios from "axios";
+
+dotenv.config();
 
 const app = express();
 
@@ -7,44 +11,113 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/api/gifts", async (req, res) => {
-  const { relationship, occasion, interests, budget } = req.body;
+  try {
+    const { relationship, occasion, interests, budget, mode } = req.body;
 
-  const gifts = [
-    {
-      name: `Personalized ${interests || "memory"} gift box`,
-      reason: `A thoughtful option for a ${relationship} on ${occasion}, matching their interests.`,
-      match: "94%",
-      price: budget || "₹1000 - ₹3000",
-    },
-    {
-      name: "Customized photo frame",
-      reason: "Feels personal, emotional, and budget-friendly.",
-      match: "91%",
-      price: "₹500 - ₹1500",
-    },
-    {
-      name: "Self-care hamper",
-      reason: "Great for someone who enjoys comfort, relaxation, and useful gifts.",
-      match: "88%",
-      price: "₹1000 - ₹2500",
-    },
-    {
-      name: "Premium journal with pen set",
-      reason: "Useful, aesthetic, and suitable for most occasions.",
-      match: "85%",
-      price: "₹700 - ₹2000",
-    },
-    {
-      name: "Mini desk decor lamp",
-      reason: "Cute, practical, and adds personality to their room or desk.",
-      match: "82%",
-      price: "₹800 - ₹2500",
-    },
-  ];
+    const aiResponse = await axios.post(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        model: "openrouter/free",
+        messages: [
+          {
+            role: "user",
+            content: `
+Suggest 5 thoughtful gift ideas.
 
-  res.json({
-    result: JSON.stringify(gifts),
-  });
+Relationship: ${relationship}
+Occasion: ${occasion}
+Interests: ${interests}
+Budget: ${budget}
+Shopping mode: ${mode}
+
+Return ONLY valid JSON array.
+No markdown. No backticks.
+
+Format:
+[
+  {
+    "name": "",
+    "reason": "",
+    "match": "",
+    "price": ""
+  }
+]
+`,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    let aiText = aiResponse.data.choices[0].message.content;
+
+    aiText = aiText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const gifts = JSON.parse(aiText);
+
+    const finalResults = await Promise.all(
+      gifts.map(async (gift, index) => {
+        try {
+          const productResponse = await axios.get(
+            "https://serpapi.com/search.json",
+            {
+              params: {
+                engine: "google_shopping",
+                q: `${gift.name} ${budget} India`,
+                api_key: process.env.SERPAPI_KEY,
+              },
+            }
+          );
+
+          const product = productResponse.data.shopping_results?.[0];
+
+          return {
+            ...gift,
+            image: product?.thumbnail || null,
+            buyLink:
+              product?.link ||
+              `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(
+                gift.name + " " + budget + " India"
+              )}`,
+            source: product?.source || "Google Shopping",
+          };
+        } catch (error) {
+          return {
+            ...gift,
+            image: null,
+            buyLink: `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(
+              gift.name + " " + budget + " India"
+            )}`,
+            source: "Google Shopping",
+          };
+        }
+      })
+    );
+
+    res.json({
+      results: finalResults,
+      offlineSearch:
+        mode === "Offline"
+          ? `https://www.google.com/maps/search/${encodeURIComponent(
+              interests + " gift shops near me"
+            )}`
+          : null,
+    });
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+
+    res.status(500).json({
+      error: "Something went wrong",
+    });
+  }
 });
 
 app.listen(5000, () => {
