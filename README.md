@@ -1,16 +1,108 @@
-# React + Vite
+# The Gifting Co.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Gifting Co. is an AI-powered gifting platform designed to help users discover thoughtful and personalized gift ideas effortlessly. Users can select relationship, occasion, interests, budget, and shopping preference to receive curated recommendations powered by AI.
 
-Currently, two official plugins are available:
+The platform combines luxury-inspired UI design with real shopping product links, product images, and nearby offline shopping support to create a modern gifting experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* AI-generated personalized gift recommendations
+* Real shopping product links and product images
+* Online and offline gifting modes
+* Nearby gift shop discovery using Google Maps search
+* Multi-step interactive gifting experience
+* Fully responsive modern UI
+* Animated splash screen and premium branding
+* Elegant luxury-inspired interface
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* Tailwind CSS
+* Framer Motion
+* Axios
+
+### Backend
+
+* Node.js
+* Express.js
+* OpenRouter API
+* SerpAPI
+
+---
+
+## APIs Used
+
+* OpenRouter for AI-generated recommendations
+* SerpAPI for real shopping products and images
+* Google Maps search integration for offline nearby stores
+
+---
+
+## Project Structure
+
+```plaintext
+gifting-co/
+│
+├── public/
+│   └── logo.png
+│
+├── src/
+│   │
+│   ├── components/
+│   │   ├── FloatingCard.jsx
+│   │   ├── GiftForm.jsx
+│   │   ├── Hero.jsx
+│   │   ├── HowItWorksModal.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── SplashScreen.jsx
+│   │   └── Stats.jsx
+│   │
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+│
+├── server/
+│   │
+│   ├── server.js
+│   ├── package.json
+│   └── .env
+│
+├── package.json
+├── package-lock.json
+├── vite.config.js
+├── tailwind.config.js
+└── README.md
+```
+
+---
+
+## Future Improvements
+
+* User authentication
+* Saved wishlists
+* Personalized accounts
+* Payment integration
+* Gift tracking
+* Voice AI assistant
+* Admin dashboard
+* Better offline store APIs
+
+---
+
+## Author
+
+Built by PANVITHA CHOWDARY MURAKONDA
+
+GitHub:
+[panvithachowdary GitHub](https://github.com/panvithachowdary?utm_source=chatgpt.com)
+
+Project Repository:
+[The Gifting Co Repository](https://github.com/panvithachowdary/gifting-co?utm_source=chatgpt.com)
