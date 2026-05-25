@@ -84,18 +84,6 @@ gifting-co/
 
 ---
 
-## Future Improvements
-
-* User authentication
-* Saved wishlists
-* Personalized accounts
-* Payment integration
-* Gift tracking
-* Voice AI assistant
-* Admin dashboard
-* Better offline store APIs
-
----
 
 ## Author
 
