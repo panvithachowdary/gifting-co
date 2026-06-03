@@ -94,3 +94,7 @@ GitHub:
 
 Project Repository:
 [The Gifting Co Repository](https://github.com/panvithachowdary/gifting-co?utm_source=chatgpt.com)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
