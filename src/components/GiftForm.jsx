@@ -5,7 +5,7 @@ function GiftForm() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
-
+  
   const emptyForm = {
     relationship: "",
     occasion: "",
@@ -38,10 +38,13 @@ function GiftForm() {
     try {
       setLoading(true);
 
-      const response = await axios.post(
-        "http://localhost:5000/api/gifts",
-        formData
-      );
+      const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+const response = await axios.post(
+  `${API_URL}/api/gifts`,
+  formData
+);
 
       setResults(response.data.results);
     } catch (error) {
